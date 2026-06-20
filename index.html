@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selamat Ulang Tahun, Suryani Kahar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0A0908;
+    --dark: #14100C;
+    --brown: #1C1410;
+    --gold: #D4AF37;
+    --gold-light: #F2D88F;
+    --bronze: #8B6914;
+    --cream: #F5E6C8;
+    --muted: #8A7F6B;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--gold); color: var(--black); }
+
+  /* Editable name control */
+  #name-editor {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 200;
+    background: rgba(20,16,12,0.92);
+    border: 1px solid var(--bronze);
+    border-radius: 50px;
+    padding: 0.5rem 0.7rem 0.5rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: opacity 0.3s;
+  }
+  #name-editor input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--gold-light);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    width: 140px;
+  }
+  #name-editor input::placeholder { color: var(--muted); }
+  #name-editor button {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  #name-editor button:hover { transform: scale(1.1); }
+  #name-editor-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Particle canvas */
+  #particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  /* ── HERO / INVITATION ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .ornament-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    margin: 0 auto 1.5rem;
+  }
+
+  .frame {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+    padding: 3.5rem 3rem;
+    border: 1px solid var(--bronze);
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(28,20,16,0.4), rgba(10,9,8,0.6));
+    backdrop-filter: blur(4px);
+  }
+
+  .frame::before, .frame::after {
+    content: '';
+    position: absolute;
+    width: 26px; height: 26px;
+    border: 1px solid var(--gold);
+  }
+  .frame::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .frame::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+  .eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+
+  .invite-to {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 7vw, 4.6rem);
+    line-height: 1.05;
+    color: var(--gold-light);
+    letter-spacing: 0.01em;
+    text-shadow: 0 0 40px rgba(212,175,55,0.25);
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.2vw, 1.3rem);
+    color: var(--cream);
+    margin-top: 1.2rem;
+    opacity: 0.85;
+  }
+
+  .age-display {
+    margin-top: 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--bronze);
+    text-transform: uppercase;
+  }
+
+  .scroll-cue {
+    margin-top: 3rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    animation: floaty 2.4s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100%{transform:translateY(0); opacity:0.5} 50%{transform:translateY(8px); opacity:1} }
+
+  /* ── SECTION SHARED ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 7rem 2rem;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    color: var(--gold-light);
+    margin-bottom: 3.5rem;
+    line-height: 1.1;
+  }
+
+  /* ── WISH CARD (flip) ── */
+  #wish-section { display: block; }
+  #wish-section .wish-card-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .wish-card {
+    width: min(440px, 90vw);
+    height: 320px;
+    position: relative;
+    perspective: 1600px;
+    cursor: pointer;
+  }
+
+  .wish-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transition: transform 1s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .wish-card.flipped .wish-inner { transform: rotateY(180deg); }
+
+  .wish-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--bronze);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    text-align: center;
+  }
+
+  .wish-front {
+    background: linear-gradient(160deg, var(--brown), var(--black));
+  }
+
+  .wish-front .seal {
+    width: 64px; height: 64px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .wish-front p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+
+  .wish-back {
+    background: linear-gradient(160deg, #1A1108, var(--black));
+    transform: rotateY(180deg);
+    overflow-y: auto;
+  }
+
+  .wish-back p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.3vw, 1.25rem);
+    line-height: 1.7;
+    color: var(--cream);
+  }
+
+  .wish-back .signed {
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* ── GALLERY OF WISHES ── */
+  .wishes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.4rem;
+  }
+
+  .wish-tile {
+    background: linear-gradient(160deg, rgba(28,20,16,0.6), rgba(10,9,8,0.4));
+    border: 1px solid var(--bronze);
+    border-radius: 6px;
+    padding: 1.8rem;
+    transition: transform 0.35s, border-color 0.35s;
+  }
+
+  .wish-tile:hover {
+    transform: translateY(-6px);
+    border-color: var(--gold);
+  }
+
+  .wish-tile .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    color: var(--gold);
+    line-height: 0.6;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+
+  .wish-tile p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--cream);
+  }
+
+  /* ── CANDLE BLOW ── */
+  #candles {
+    text-align: center;
+  }
+
+  .cake-area {
+    display: flex;
+    justify-content: center;
+    gap: 2.4rem;
+    margin: 3rem 0 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .candle {
+    position: relative;
+    width: 14px;
+    height: 90px;
+    background: linear-gradient(180deg, var(--gold-light), var(--bronze));
+    border-radius: 3px;
+    box-shadow: 0 0 20px rgba(212,175,55,0.2);
+  }
+
+  .flame {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 28px;
+    background: radial-gradient(circle at 50% 70%, #FFF3C4, #FFB200 60%, transparent 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: flicker 0.5s ease-in-out infinite alternate;
+    transition: opacity 0.4s, transform 0.4s;
+  }
+
+  @keyframes flicker {
+    0% { transform: translateX(-50%) scaleY(1) rotate(-2deg); }
+    100% { transform: translateX(-50%) scaleY(1.12) rotate(2deg); }
+  }
+
+  .candle.blown .flame {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0.2);
+  }
+
+  .smoke {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    width: 4px; height: 4px;
+    background: rgba(200,200,200,0.4);
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  .candle.blown .smoke {
+    animation: smokeRise 1.6s ease-out forwards;
+  }
+
+  @keyframes smokeRise {
+    0% { opacity: 0.6; transform: translate(-50%, 0) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -60px) scale(3); }
+  }
+
+  #blow-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 1rem 2.6rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  }
+
+  #blow-btn:hover {
+    background: var(--gold);
+    color: var(--black);
+    box-shadow: 0 0 40px rgba(212,175,55,0.35);
+  }
+
+  #blow-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .post-blow-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--gold-light);
+    margin-top: 2rem;
+    opacity: 0;
+    transition: opacity 0.8s;
+  }
+  .post-blow-msg.show { opacity: 1; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 4rem 2rem 6rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  footer .heart { color: var(--gold); }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* Confetti canvas */
+  #confetti-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .frame { padding: 2.4rem 1.6rem; }
+    #name-editor { left: 1rem; right: 1rem; bottom: 1rem; }
+    #name-editor input { width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Name editor -->
+<div id="name-editor">
+  <span id="name-editor-label">Nama:</span>
+  <input id="name-input" type="text" placeholder="Tulis namamu di sini..." maxlength="40">
+  <button id="name-save" title="Simpan">✓</button>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="frame">
+    <p class="eyebrow">✦ Sebuah Perayaan ✦</p>
+    <p class="invite-to">Untuk yang istimewa</p>
+    <h1 id="name-display">Namamu di Sini</h1>
+    <p class="subtitle">"Bertambah usia, bertambah pula cahaya yang kau bawa untuk dunia."</p>
+    <div class="age-display">Hari ini, dunia merayakanmu</div>
+  </div>
+  <div class="scroll-cue">↓ gulir untuk membuka ↓</div>
+</div>
+
+<!-- WISH CARD -->
+<section id="wish-section">
+  <p class="section-label reveal">✦ Pesan Tersembunyi ✦</p>
+  <h2 class="reveal">Sebuah Kartu, Untukmu</h2>
+  <div class="wish-card-wrap">
+    <div class="wish-card reveal" id="wishCard">
+      <div class="wish-inner">
+        <div class="wish-face wish-front">
+          <div class="seal">✦</div>
+          <p>Ketuk untuk membuka kartu</p>
+        </div>
+        <div class="wish-face wish-back">
+          <p id="wish-text">
+            Selamat ulang tahun, <strong id="wish-name">kamu yang istimewa</strong>.
+            Semoga setiap langkah di tahun barumu dipenuhi keberuntungan,
+            kesehatan yang teguh, dan kebahagiaan yang tak pernah surut.
+            Kau pantas mendapat semua hal baik di dunia ini.
+          </p>
+          <p class="signed">— Dengan Cinta &amp; Doa</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <p class="section-label reveal">✦ Untaian Doa ✦</p>
+  <h2 class="reveal">Harapan di Hari Spesialmu</h2>
+  <div class="wishes-grid reveal">
+    <div class="wish-tile">
+      <span class="quote-mark">"</span>
+      <p>Semoga usia barumu membawa kedamaian yang lebih dalam dan rezeki yang lebih luas.</p>
+    </div>
+    <div class="wish-tile">
+      <span class="quote-mark">"</span>
+      <p>Teruslah bersinar seperti biasanya — dunia ini lebih hangat karena kehadiranmu.</p>
+    </div>
+    <div class="wish-tile">
+      <span class="quote-mark">"</span>
+      <p>Semoga setiap mimpi yang kau rawat perlahan menemukan jalannya menjadi nyata.</p>
+    </div>
+    <div class="wish-tile">
+      <span class="quote-mark">"</span>
+      <p>Kebahagiaan terbesar adalah memiliki orang seperti dirimu untuk dirayakan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CANDLES -->
+<section id="candles">
+  <p class="section-label reveal">✦ Saatnya Membuat Harapan ✦</p>
+  <h2 class="reveal">Tiup Lilinnya</h2>
+  <div class="cake-area reveal">
+    <div class="candle" data-c="1"><div class="flame"></div><div class="smoke"></div></div>
+    <div class="candle" data-c="2"><div class="flame"></div><div class="smoke"></div></div>
+    <div class="candle" data-c="3"><div class="flame"></div><div class="smoke"></div></div>
+  </div>
+  <button id="blow-btn" class="reveal">Tiup Lilin 🕯️</button>
+  <p class="post-blow-msg" id="post-blow-msg">Semoga semua harapanmu terkabul ✨</p>
+</section>
+
+<footer>
+  <p>Dibuat dengan <span class="heart">♥</span> untuk merayakan hari istimewamu</p>
+</footer>
+
+<script>
+// ── Name editing ──
+const nameInput = document.getElementById('name-input');
+const nameDisplay = document.getElementById('name-display');
+const wishName = document.getElementById('wish-name');
+const postBlowMsg = document.getElementById('post-blow-msg');
+let currentName = "";
+
+// Load saved name if it exists
+try {
+  const saved = localStorage.getItem('birthdayName');
+  if (saved) {
+    currentName = saved;
+    nameDisplay.textContent = saved;
+    wishName.textContent = saved;
+    postBlowMsg.textContent = `Semoga semua harapanmu terkabul, ${saved} ✨`;
+    nameInput.placeholder = saved;
+  }
+} catch (e) {}
+
+document.getElementById('name-save').addEventListener('click', updateName);
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') updateName(); });
+
+function updateName() {
+  const val = nameInput.value.trim();
+  if (val.length > 0) {
+    currentName = val;
+    nameDisplay.textContent = val;
+    wishName.textContent = val;
+    postBlowMsg.textContent = `Semoga semua harapanmu terkabul, ${val} ✨`;
+    nameInput.value = '';
+    nameInput.placeholder = val;
+    try { localStorage.setItem('birthdayName', val); } catch (e) {}
+  }
+}
+
+// ── Wish card flip ──
+const wishCard = document.getElementById('wishCard');
+wishCard.addEventListener('click', () => wishCard.classList.toggle('flipped'));
+
+// ── Candle blow ──
+const candles = document.querySelectorAll('.candle');
+const blowBtn = document.getElementById('blow-btn');
+blowBtn.addEventListener('click', () => {
+  candles.forEach((c, i) => setTimeout(() => c.classList.add('blown'), i * 250));
+  blowBtn.disabled = true;
+  blowBtn.textContent = 'Harapan Terkirim 🎉';
+  setTimeout(() => {
+    postBlowMsg.classList.add('show');
+    fireConfetti();
+  }, 900);
+});
+
+// ── Scroll reveal ──
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+reveals.forEach(r => obs.observe(r));
+
+// ── Ambient gold particles ──
+const pCanvas = document.getElementById('particles');
+const pCtx = pCanvas.getContext('2d');
+let pW, pH, particles = [];
+
+function resizeP() {
+  pW = pCanvas.width = window.innerWidth;
+  pH = pCanvas.height = document.documentElement.scrollHeight;
+}
+window.addEventListener('resize', () => { resizeP(); initParticles(); });
+
+function initParticles() {
+  particles = [];
+  const count = Math.floor((pW * pH) / 90000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * pW,
+      y: Math.random() * pH,
+      r: 0.6 + Math.random() * 1.8,
+      vy: 0.15 + Math.random() * 0.35,
+      vx: (Math.random() - 0.5) * 0.2,
+      o: 0.2 + Math.random() * 0.5
+    });
+  }
+}
+
+function drawParticles() {
+  pCtx.clearRect(0, 0, pW, pH);
+  for (const p of particles) {
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    pCtx.fillStyle = `rgba(212,175,55,${p.o})`;
+    pCtx.fill();
+    p.y -= p.vy;
+    p.x += p.vx;
+    if (p.y < -10) { p.y = pH + 10; p.x = Math.random() * pW; }
+  }
+  requestAnimationFrame(drawParticles);
+}
+
+resizeP();
+initParticles();
+drawParticles();
+
+// ── Confetti burst ──
+const cCanvas = document.getElementById('confetti-canvas');
+const cCtx = cCanvas.getContext('2d');
+let confetti = [];
+
+function fireConfetti() {
+  cCanvas.width = window.innerWidth;
+  cCanvas.height = window.innerHeight;
+  const colors = ['#D4AF37', '#F2D88F', '#8B6914', '#F5E6C8'];
+  confetti = [];
+  for (let i = 0; i < 140; i++) {
+    confetti.push({
+      x: cCanvas.width / 2,
+      y: cCanvas.height * 0.55,
+      vx: (Math.random() - 0.5) * 14,
+      vy: -Math.random() * 14 - 4,
+      size: 4 + Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 12,
+      life: 1
+    });
+  }
+  animateConfetti();
+}
+
+function animateConfetti() {
+  cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+  let alive = false;
+  for (const c of confetti) {
+    c.vy += 0.28;
+    c.x += c.vx;
+    c.y += c.vy;
+    c.rot += c.vr;
+    c.life -= 0.006;
+    if (c.life > 0) {
+      alive = true;
+      cCtx.save();
+      cCtx.translate(c.x, c.y);
+      cCtx.rotate((c.rot * Math.PI) / 180);
+      cCtx.globalAlpha = Math.max(c.life, 0);
+      cCtx.fillStyle = c.color;
+      cCtx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 0.6);
+      cCtx.restore();
+    }
+  }
+  if (alive) requestAnimationFrame(animateConfetti);
+  else cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+}
+</script>
+</body>
+</html>
